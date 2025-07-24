@@ -32,7 +32,7 @@
         <div
           class="text-xl font-mono font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent"
         >
-          {{ formatDuration(getElapsedTime(activeEntry), true) }}
+          {{ formatDuration(getElapsedTime(activeEntry)) }}
         </div>
 
         <div class="flex items-center gap-2">

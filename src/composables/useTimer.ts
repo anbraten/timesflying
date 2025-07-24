@@ -1,4 +1,4 @@
-import { ref, computed, onUnmounted, onMounted } from 'vue';
+import { ref, onUnmounted, onMounted, computed } from 'vue';
 import type { TimeEntry } from '../types';
 import { toDate } from './utils';
 
@@ -24,21 +24,17 @@ export function useTimer() {
   function getElapsedTime(entry: TimeEntry): number {
     const startTime = toDate(entry.startTime);
     const endTime = entry.endTime ? toDate(entry.endTime) : currentTime.value;
-    return Math.max(endTime.getTime() - startTime.getTime(), 0) + 1000; // Add 1s to avoid zero duration
+    return Math.max(endTime.getTime() - startTime.getTime(), 0);
   }
 
-  function formatDuration(milliseconds: number, showSeconds?: boolean): string {
+  function formatDuration(milliseconds: number): string {
     const seconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
 
     const formatNumber = (num: number) => num.toString().padStart(2, '0');
 
-    return [
-      formatNumber(hours),
-      formatNumber(Math.max(minutes % 60, showSeconds ? 0 : 1)),
-      ...(showSeconds ? [formatNumber(seconds % 60)] : []),
-    ].join(':');
+    return [formatNumber(hours), formatNumber(minutes % 60), formatNumber(seconds % 60)].join(':');
   }
 
   return {
