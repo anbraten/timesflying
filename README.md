@@ -9,7 +9,6 @@ is a super basic time tracking app. It allows you to track your time spent on di
 - [x] Continue tracking tasks later on
 - [x] Data is stored locally in your browser for privacy
 - [x] Simple and intuitive interface
-- [ ] Export your tracking to JSON
-- [ ] Import your tracking from JSON
-- [ ] Tasks are grouped by day
+- [x] Tasks are grouped by day
+- [ ] Import / export your tracking to JSON
 - [ ] Managing projects

@@ -7,16 +7,15 @@ export function useTimeTracking() {
 
   const projects = computed<Project[]>(() => [{ id: '1', name: 'Meetings', color: '#FF5733' }]);
 
-  const { data: timeEntries } = db.getAllEntries();
-  const { data: activeEntry } = db.getActiveEntry();
-  const { data: pinnedEntries } = db.getPinnedEntries();
-  const { data: recentDescriptions } = db.searchEntries('', 10);
+  const { data: activeEntry } = db.getActiveTimeEntry();
+  const { data: pinnedEntries } = db.getPinnedTimeEntries();
+  const { data: recentDescriptions } = db.searchTimeEntries('', 10);
   const { data: lastProject } = db.lastProject();
 
-  async function startNewEntry(description: string, project: string) {
+  async function startNewTimeEntry(description: string, project: string) {
     // Stop any active entry first
     if (activeEntry.value) {
-      stopActiveEntry();
+      stopActiveTimeEntry();
     }
 
     const newEntry: TimeEntry = {
@@ -30,7 +29,7 @@ export function useTimeTracking() {
     await db.timeEntries.add(newEntry);
   }
 
-  async function stopActiveEntry() {
+  async function stopActiveTimeEntry() {
     if (!activeEntry.value) return;
 
     await db.timeEntries.update(activeEntry.value.id, {
@@ -38,14 +37,14 @@ export function useTimeTracking() {
     });
   }
 
-  async function continueEntry(entryId: number) {
+  async function continueTimeEntry(entryId: number) {
     const entry = await db.timeEntries.get(entryId);
     if (!entry) return;
 
-    startNewEntry(entry.description, entry.project);
+    startNewTimeEntry(entry.description, entry.project);
   }
 
-  async function togglePinEntry(entryId: number) {
+  async function togglePinTimeEntry(entryId: number) {
     const entry = await db.timeEntries.get(entryId);
     if (!entry) throw new Error('Entry not found');
 
@@ -54,23 +53,23 @@ export function useTimeTracking() {
     });
   }
 
-  async function deleteEntry(entryId: number) {
+  async function deleteTimeEntry(entryId: number) {
     if (!confirm('Are you sure you want to delete this entry?')) return;
 
     await db.timeEntries.delete(entryId);
   }
 
   return {
-    timeEntries,
+    getAllTimeEntries: db.getAllTimeEntries,
     projects,
     activeEntry,
     pinnedEntries,
     recentDescriptions,
     lastProject,
-    startNewEntry,
-    stopActiveEntry,
-    continueEntry,
-    togglePinEntry,
-    deleteEntry,
+    startNewTimeEntry,
+    stopActiveTimeEntry,
+    continueTimeEntry,
+    togglePinTimeEntry,
+    deleteTimeEntry,
   };
 }
