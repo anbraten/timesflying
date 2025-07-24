@@ -41,11 +41,11 @@
             <IconButton
               variant="primary"
               name="play"
-              @click="continueEntry(entry.id)"
+              @click="continueTimeEntry(entry.id)"
               title="Start timer with this task"
             />
 
-            <IconButton variant="warning" name="bookmark" @click="togglePinEntry(entry.id)" title="Unpin task" />
+            <IconButton variant="warning" name="bookmark" @click="togglePinTimeEntry(entry.id)" title="Unpin task" />
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@
 import { useTimeTracking } from '../composables/useTimeTracking';
 import IconButton from './ui/IconButton.vue';
 
-const { pinnedEntries, projects, continueEntry, togglePinEntry } = useTimeTracking();
+const { pinnedEntries, projects, continueTimeEntry, togglePinTimeEntry } = useTimeTracking();
 
 const getProjectName = (projectId: string) => {
   return projects.value.find((p) => p.id === projectId)?.name || 'Unknown';

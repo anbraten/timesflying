@@ -42,7 +42,7 @@ import { useTimeTracking } from '../composables/useTimeTracking';
 import Button from './ui/Button.vue';
 import Icon from './ui/Icon.vue';
 
-const { projects, recentDescriptions, startNewEntry, lastProject } = useTimeTracking();
+const { projects, recentDescriptions, startNewTimeEntry, lastProject } = useTimeTracking();
 
 const newDescription = ref('');
 const newProject = ref('');
@@ -56,7 +56,7 @@ watch(lastProject, (value) => {
 const isValid = computed(() => newDescription.value.trim() !== '' && newProject.value !== '');
 
 function handleStartTimer() {
-  startNewEntry(newDescription.value, newProject.value);
+  startNewTimeEntry(newDescription.value, newProject.value);
 
   // Reset form
   newDescription.value = '';
