@@ -1,0 +1,52 @@
+<template>
+  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+    <!-- List Icon -->
+    <path
+      v-if="name === 'list'"
+      fill-rule="evenodd"
+      d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+      clip-rule="evenodd"
+    />
+
+    <!-- Stop Icon -->
+    <path
+      v-if="name === 'stop'"
+      fill-rule="evenodd"
+      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
+      clip-rule="evenodd"
+    />
+
+    <!-- Clock Icon -->
+    <path
+      v-if="name === 'clock'"
+      fill-rule="evenodd"
+      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+      clip-rule="evenodd"
+    />
+
+    <!-- Play Icon -->
+    <path
+      v-if="name === 'play'"
+      fill-rule="evenodd"
+      d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+      clip-rule="evenodd"
+    />
+
+    <!-- Bookmark Icon -->
+    <path v-if="name === 'bookmark'" d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+
+    <!-- Trash Icon -->
+    <path
+      v-if="name === 'trash'"
+      fill-rule="evenodd"
+      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+      clip-rule="evenodd"
+    />
+  </svg>
+</template>
+
+<script setup lang="ts">
+defineProps<{
+  name: 'list' | 'stop' | 'clock' | 'play' | 'bookmark' | 'trash';
+}>();
+</script>
