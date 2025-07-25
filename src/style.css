@@ -4,6 +4,7 @@
   html {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    scrollbar-gutter: stable;
   }
 
   body {
