@@ -5,9 +5,6 @@ export function useTimeTracking() {
   const db = useDb();
 
   const { data: activeEntry } = db.getActiveTimeEntry();
-  const { data: pinnedEntries } = db.getPinnedTimeEntries();
-  const { data: recentDescriptions } = db.searchTimeEntries('', 10);
-  const { data: lastProject } = db.lastUsedProject();
 
   async function startNewTimeEntry(description: string, project: number) {
     // Stop any active entry first
@@ -57,11 +54,7 @@ export function useTimeTracking() {
   }
 
   return {
-    getAllTimeEntries: db.getAllTimeEntries,
     activeEntry,
-    pinnedEntries,
-    recentDescriptions,
-    lastProject,
     startNewTimeEntry,
     stopActiveTimeEntry,
     continueTimeEntry,

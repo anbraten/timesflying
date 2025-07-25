@@ -13,38 +13,8 @@
       </div>
     </div>
 
-    <!-- Active Timer Row (if active) -->
-    <div
-      v-if="activeEntry"
-      class="bg-gradient-to-r from-blue-50/80 to-blue-100/60 border border-blue-200/60 rounded-xl p-4 shadow-lg shadow-blue-500/10 mb-4 transition-all duration-300"
-    >
-      <div class="flex items-center gap-4">
-        <div class="flex flex-1 min-w-0 items-center">
-          <p class="font-semibold text-gray-900 truncate">{{ activeEntry.description }}</p>
-
-          <div
-            class="w-2.5 h-2.5 rounded-full flex-shrink-0 ml-3 mr-1"
-            :style="{ backgroundColor: getProjectColor(activeEntry.project) }"
-          ></div>
-          <span class="text-sm font-medium text-gray-600">{{ getProjectName(activeEntry.project) }}</span>
-        </div>
-
-        <div
-          class="text-xl font-mono font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent"
-        >
-          {{ formatDuration(getElapsedTime(activeEntry)) }}
-        </div>
-
-        <div class="flex items-center gap-2">
-          <Button variant="error" @click="stopActiveTimeEntry" title="Stop">
-            <Icon name="stop" class="w-5 h-5" />
-            <span class="hidden md:block ml-1">Stop</span>
-          </Button>
-        </div>
-      </div>
-    </div>
-
-    <NewTimeEntry v-if="!activeEntry" />
+    <ActiveTimeEntry v-if="activeEntry" :activeTimeEntry="activeEntry" />
+    <NewTimeEntry v-else />
 
     <div v-if="entriesByDay.length === 0" class="text-center py-16">
       <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -133,21 +103,22 @@
 import { computed, ref } from 'vue';
 import { useTimer } from '../composables/useTimer';
 import { useTimeTracking } from '../composables/useTimeTracking';
-import { toDate } from '../composables/utils';
+import { formatTime, toDate, useProjectHelpers } from '../composables/utils';
 import Button from './ui/Button.vue';
 import IconButton from './ui/IconButton.vue';
 import Icon from './ui/Icon.vue';
 import NewTimeEntry from './NewTimeEntry.vue';
 import { isEqual } from 'date-fns';
 import { useDb } from '../composables/useDb';
+import ActiveTimeEntry from './ActiveTimeEntry.vue';
 
 const db = useDb();
 const { formatDuration, getElapsedTime } = useTimer();
-const { getAllTimeEntries, activeEntry, continueTimeEntry, togglePinTimeEntry, deleteTimeEntry, stopActiveTimeEntry } =
-  useTimeTracking();
+const { activeEntry, continueTimeEntry, togglePinTimeEntry, deleteTimeEntry } = useTimeTracking();
+const { getProjectName, getProjectColor } = useProjectHelpers();
 
 const perPage = ref(20);
-const { data: timeEntries } = getAllTimeEntries(0, perPage);
+const { data: timeEntries } = db.getAllTimeEntries(0, perPage);
 
 const entriesByDay = computed(() => {
   const entries = [...(timeEntries.value ?? [])]
@@ -185,23 +156,6 @@ const todayTime = computed(() => {
       return total + getElapsedTime(entry);
     }, 0);
 });
-
-const { data: projects } = db.getProjects();
-
-function getProjectName(projectId: number) {
-  return projects.value?.find((p) => p.id === projectId)?.name || 'Unknown';
-}
-
-function getProjectColor(projectId: number) {
-  return projects.value?.find((p) => p.id === projectId)?.color || '#6b7280';
-}
-
-function formatTime(date: Date | number) {
-  return toDate(date).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 function formatDayHeader(date: Date) {
   const today = new Date();

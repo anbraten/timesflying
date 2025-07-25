@@ -43,13 +43,15 @@ import Button from './ui/Button.vue';
 import Icon from './ui/Icon.vue';
 import { useDb } from '../composables/useDb';
 
-const { recentDescriptions, startNewTimeEntry, lastProject } = useTimeTracking();
-
 const db = useDb();
-const { data: projects } = db.getProjects();
+const { startNewTimeEntry } = useTimeTracking();
 
 const newDescription = ref('');
 const newProjectId = ref<number>();
+
+const { data: projects } = db.getProjects();
+const { data: recentDescriptions } = db.searchTimeEntries('', 10);
+const { data: lastProject } = db.lastUsedProject();
 
 watch(lastProject, (value) => {
   if (newProjectId.value === undefined && value != null) {

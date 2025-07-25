@@ -56,20 +56,12 @@
 <script setup lang="ts">
 import { useDb } from '../composables/useDb';
 import { useTimeTracking } from '../composables/useTimeTracking';
+import { useProjectHelpers } from '../composables/utils';
 import IconButton from './ui/IconButton.vue';
 
-const { pinnedEntries, continueTimeEntry, togglePinTimeEntry } = useTimeTracking();
-
 const db = useDb();
-const { data: projects } = db.getProjects();
+const { continueTimeEntry, togglePinTimeEntry } = useTimeTracking();
+const { getProjectName, getProjectColor } = useProjectHelpers();
 
-// TODO: move to composable
-const getProjectName = (projectId: number) => {
-  return projects.value?.find((p) => p.id === projectId)?.name || 'Unknown';
-};
-
-// TODO: move to composable
-const getProjectColor = (projectId: number) => {
-  return projects.value?.find((p) => p.id === projectId)?.color || '#6b7280';
-};
+const { data: pinnedEntries } = db.getPinnedTimeEntries();
 </script>
