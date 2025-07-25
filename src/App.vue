@@ -17,27 +17,28 @@
           <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
             Time's flying
           </h1>
+
+          <IconButton v-if="page === 'home'" name="settings" class="ml-auto" @click="page = 'settings'" />
+          <IconButton v-if="page === 'settings'" name="clock" class="ml-auto" @click="page = 'home'" />
         </div>
       </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <!-- Pinned Tasks -->
-        <div class="lg:col-span-1">
-          <Suspense>
-            <PinnedTasks />
-          </Suspense>
+      <Suspense>
+        <div>
+          <Home v-if="page === 'home'" />
+          <Settings v-if="page === 'settings'" />
         </div>
-
-        <!-- Time Entry List - Full width -->
-        <div class="lg:col-span-3">
-          <TimeEntryList />
-        </div>
-      </div>
+      </Suspense>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import PinnedTasks from './components/PinnedTasks.vue';
-import TimeEntryList from './components/TimeEntryList.vue';
+import { ref } from 'vue';
+import IconButton from './components/ui/IconButton.vue';
+import Home from './pages/Home.vue';
+import Settings from './pages/Settings.vue';
+
+// TODO: use proper router
+const page = ref<'home' | 'settings'>('home');
 </script>

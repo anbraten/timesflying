@@ -1,18 +1,15 @@
-import { computed } from 'vue';
-import type { TimeEntry, Project } from '../types';
-import { useDb } from './usDb';
+import type { TimeEntry } from '../types';
+import { useDb } from './useDb';
 
 export function useTimeTracking() {
   const db = useDb();
 
-  const projects = computed<Project[]>(() => [{ id: '1', name: 'Meetings', color: '#FF5733' }]);
-
   const { data: activeEntry } = db.getActiveTimeEntry();
   const { data: pinnedEntries } = db.getPinnedTimeEntries();
   const { data: recentDescriptions } = db.searchTimeEntries('', 10);
-  const { data: lastProject } = db.lastProject();
+  const { data: lastProject } = db.lastUsedProject();
 
-  async function startNewTimeEntry(description: string, project: string) {
+  async function startNewTimeEntry(description: string, project: number) {
     // Stop any active entry first
     if (activeEntry.value) {
       stopActiveTimeEntry();
@@ -61,7 +58,6 @@ export function useTimeTracking() {
 
   return {
     getAllTimeEntries: db.getAllTimeEntries,
-    projects,
     activeEntry,
     pinnedEntries,
     recentDescriptions,

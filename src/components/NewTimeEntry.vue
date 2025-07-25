@@ -17,7 +17,7 @@
       </datalist>
 
       <select
-        v-model="newProject"
+        v-model="newProjectId"
         name="project"
         class="w-48 flex-shrink-0 px-4 py-3 text-sm bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer"
         required
@@ -41,25 +41,33 @@ import { computed, ref, watch } from 'vue';
 import { useTimeTracking } from '../composables/useTimeTracking';
 import Button from './ui/Button.vue';
 import Icon from './ui/Icon.vue';
+import { useDb } from '../composables/useDb';
 
-const { projects, recentDescriptions, startNewTimeEntry, lastProject } = useTimeTracking();
+const { recentDescriptions, startNewTimeEntry, lastProject } = useTimeTracking();
+
+const db = useDb();
+const { data: projects } = db.getProjects();
 
 const newDescription = ref('');
-const newProject = ref('');
+const newProjectId = ref<number>();
 
 watch(lastProject, (value) => {
-  if (newProject.value.trim() === '') {
-    newProject.value = value || '';
+  if (newProjectId.value === undefined && value != null) {
+    newProjectId.value = value;
   }
 });
 
-const isValid = computed(() => newDescription.value.trim() !== '' && newProject.value !== '');
+const isValid = computed(() => newDescription.value.trim() !== '' && newProjectId.value !== undefined);
 
 function handleStartTimer() {
-  startNewTimeEntry(newDescription.value, newProject.value);
+  if (newDescription.value.trim() === '' || newProjectId.value == null) {
+    return;
+  }
+
+  startNewTimeEntry(newDescription.value, newProjectId.value);
 
   // Reset form
   newDescription.value = '';
-  newProject.value = '';
+  newProjectId.value = undefined;
 }
 </script>

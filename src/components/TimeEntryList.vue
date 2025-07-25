@@ -139,17 +139,12 @@ import IconButton from './ui/IconButton.vue';
 import Icon from './ui/Icon.vue';
 import NewTimeEntry from './NewTimeEntry.vue';
 import { isEqual } from 'date-fns';
+import { useDb } from '../composables/useDb';
 
+const db = useDb();
 const { formatDuration, getElapsedTime } = useTimer();
-const {
-  getAllTimeEntries,
-  projects,
-  activeEntry,
-  continueTimeEntry,
-  togglePinTimeEntry,
-  deleteTimeEntry,
-  stopActiveTimeEntry,
-} = useTimeTracking();
+const { getAllTimeEntries, activeEntry, continueTimeEntry, togglePinTimeEntry, deleteTimeEntry, stopActiveTimeEntry } =
+  useTimeTracking();
 
 const perPage = ref(20);
 const { data: timeEntries } = getAllTimeEntries(0, perPage);
@@ -191,12 +186,14 @@ const todayTime = computed(() => {
     }, 0);
 });
 
-function getProjectName(projectId: string) {
-  return projects.value.find((p) => p.id === projectId)?.name || 'Unknown';
+const { data: projects } = db.getProjects();
+
+function getProjectName(projectId: number) {
+  return projects.value?.find((p) => p.id === projectId)?.name || 'Unknown';
 }
 
-function getProjectColor(projectId: string) {
-  return projects.value.find((p) => p.id === projectId)?.color || '#6b7280';
+function getProjectColor(projectId: number) {
+  return projects.value?.find((p) => p.id === projectId)?.color || '#6b7280';
 }
 
 function formatTime(date: Date | number) {

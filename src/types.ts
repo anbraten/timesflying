@@ -3,12 +3,12 @@ export interface TimeEntry {
   startTime: Date;
   endTime?: Date;
   description: string;
-  project: string;
+  project: number;
   isPinned: boolean;
 }
 
 export interface Project {
-  id: string;
+  id: number;
   name: string;
   color: string;
 }

@@ -131,7 +131,7 @@ class Database extends Dexie {
     );
   }
 
-  lastProject() {
+  lastUsedProject() {
     return liveToRef(
       liveQuery(() =>
         db.timeEntries
@@ -140,9 +140,35 @@ class Database extends Dexie {
           .then((e) => e?.project),
       ),
       {
-        default: () => null as string | null,
+        default: () => null as number | null,
       },
     );
+  }
+
+  getProjects() {
+    return liveToRef(
+      liveQuery(() => db.projects.toArray()),
+      {
+        default: () => [] as Project[],
+      },
+    );
+  }
+
+  createProject(name: string, color: string) {
+    const newProject: Project = {
+      id: Date.now(),
+      name,
+      color,
+    };
+    return this.projects.add(newProject);
+  }
+
+  updateProject(id: number, updates: Partial<Project>) {
+    return this.projects.update(id, updates);
+  }
+
+  deleteProject(id: number) {
+    return this.projects.delete(id);
   }
 }
 

@@ -54,16 +54,22 @@
 </template>
 
 <script setup lang="ts">
+import { useDb } from '../composables/useDb';
 import { useTimeTracking } from '../composables/useTimeTracking';
 import IconButton from './ui/IconButton.vue';
 
-const { pinnedEntries, projects, continueTimeEntry, togglePinTimeEntry } = useTimeTracking();
+const { pinnedEntries, continueTimeEntry, togglePinTimeEntry } = useTimeTracking();
 
-const getProjectName = (projectId: string) => {
-  return projects.value.find((p) => p.id === projectId)?.name || 'Unknown';
+const db = useDb();
+const { data: projects } = db.getProjects();
+
+// TODO: move to composable
+const getProjectName = (projectId: number) => {
+  return projects.value?.find((p) => p.id === projectId)?.name || 'Unknown';
 };
 
-const getProjectColor = (projectId: string) => {
-  return projects.value.find((p) => p.id === projectId)?.color || '#6b7280';
+// TODO: move to composable
+const getProjectColor = (projectId: number) => {
+  return projects.value?.find((p) => p.id === projectId)?.color || '#6b7280';
 };
 </script>
