@@ -38,63 +38,12 @@
 
         <!-- Day Entries -->
         <div class="space-y-3">
-          <div
-            v-for="entry in dayGroup.entries"
-            :key="entry.id"
-            class="bg-white/60 backdrop-blur-sm border border-gray-200/60 rounded-xl p-4 hover:bg-white/80 hover:shadow-gray-900/5 transition-all duration-300"
-            :class="{
-              'bg-gradient-to-r from-blue-50/80 to-blue-100/60 border-blue-200/60 shadow-lg shadow-blue-500/10':
-                !entry.endTime,
-            }"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="flex flex-1 min-w-0 items-center">
-                  <p class="font-semibold text-gray-900 truncate">{{ entry.description }}</p>
-
-                  <div
-                    class="w-2.5 h-2.5 rounded-full flex-shrink-0 ml-3 mr-1"
-                    :style="{ backgroundColor: getProjectColor(entry.project) }"
-                  ></div>
-                  <span class="text-sm font-medium text-gray-600">{{ getProjectName(entry.project) }}</span>
-                </div>
-
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4 text-sm text-gray-500">
-                    <span class="font-medium">{{ formatTime(entry.startTime) }}</span>
-                    <span v-if="entry.endTime" class="font-medium">{{ formatTime(entry.endTime) }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="font-bold text-gray-900 text-lg">
-                {{ formatDuration(getElapsedTime(entry)) }}
-              </div>
-
-              <div class="flex items-center gap-1 ml-6">
-                <IconButton
-                  variant="primary"
-                  name="play"
-                  @click="continueTimeEntry(entry.id)"
-                  title="Continue this task"
-                />
-
-                <IconButton
-                  :variant="entry.isPinned ? 'warning' : 'ghost'"
-                  @click="togglePinTimeEntry(entry.id)"
-                  :title="entry.isPinned ? 'Unpin task' : 'Pin task'"
-                  name="bookmark"
-                />
-
-                <IconButton variant="error" name="trash" @click="deleteTimeEntry(entry.id)" title="Delete entry" />
-              </div>
-            </div>
-          </div>
+          <TimeEntry v-for="entry in dayGroup.entries" :key="entry.id" :entry="entry" />
         </div>
       </div>
-      <div class="flex w-full justify-center items-center px-2 py-1">
-        <Button @click="perPage += 10">Load More</Button>
-      </div>
+    </div>
+    <div class="flex w-full justify-center items-center px-2 py-1">
+      <Button @click="perPage += 10">Load More</Button>
     </div>
   </div>
 </template>
@@ -103,19 +52,18 @@
 import { computed, ref } from 'vue';
 import { useTimer } from '../composables/useTimer';
 import { useTimeTracking } from '../composables/useTimeTracking';
-import { formatTime, toDate, useProjectHelpers } from '../composables/utils';
+import { toDate } from '../composables/utils';
 import Button from './ui/Button.vue';
-import IconButton from './ui/IconButton.vue';
 import Icon from './ui/Icon.vue';
 import NewTimeEntry from './NewTimeEntry.vue';
 import { isEqual } from 'date-fns';
 import { useDb } from '../composables/useDb';
 import ActiveTimeEntry from './ActiveTimeEntry.vue';
+import TimeEntry from './TimeEntry.vue';
 
 const db = useDb();
 const { formatDuration, getElapsedTime } = useTimer();
-const { activeEntry, continueTimeEntry, togglePinTimeEntry, deleteTimeEntry } = useTimeTracking();
-const { getProjectName, getProjectColor } = useProjectHelpers();
+const { activeEntry } = useTimeTracking();
 
 const perPage = ref(20);
 const { data: timeEntries } = db.getAllTimeEntries(0, perPage);

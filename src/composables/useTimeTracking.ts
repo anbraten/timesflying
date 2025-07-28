@@ -53,6 +53,10 @@ export function useTimeTracking() {
     await db.timeEntries.delete(entryId);
   }
 
+  async function updateTimeEntry(entryId: number, updates: Partial<TimeEntry>) {
+    await db.timeEntries.update(entryId, updates);
+  }
+
   return {
     activeEntry,
     startNewTimeEntry,
@@ -60,5 +64,6 @@ export function useTimeTracking() {
     continueTimeEntry,
     togglePinTimeEntry,
     deleteTimeEntry,
+    updateTimeEntry,
   };
 }

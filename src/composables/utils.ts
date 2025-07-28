@@ -8,6 +8,7 @@ export function formatTime(date: Date | number) {
   return toDate(date).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   });
 }
 
