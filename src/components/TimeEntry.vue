@@ -47,9 +47,15 @@
         </div>
       </div>
 
-      <div class="font-bold text-gray-900 text-lg">
-        {{ formatDuration(getElapsedTime(entry)) }}
-      </div>
+      <InlineEditingField
+        :model-value="formatDuration(getElapsedTime(props.entry))"
+        type="duration"
+        @save="saveDuration($event as string)"
+      >
+        <div class="font-bold text-gray-900 text-lg">
+          {{ formatDuration(getElapsedTime(entry)) }}
+        </div>
+      </InlineEditingField>
 
       <div class="flex items-center gap-1 ml-6">
         <IconButton variant="primary" name="play" @click="continueTimeEntry(entry.id)" title="Continue this task" />
@@ -112,5 +118,16 @@ async function saveEdit<K extends keyof TimeEntry>(field: K, newValue: TimeEntry
   await updateTimeEntry(props.entry.id, {
     [field]: newValue,
   });
+}
+
+function durationToMs(duration: string) {
+  const [hours, minutes, seconds] = duration.split(':').map(Number);
+  return (hours * 3600 + minutes * 60 + seconds) * 1000;
+}
+
+async function saveDuration(newValue: string) {
+  const start = new Date(props.entry.startTime);
+  const endTime = new Date(start.getTime() + durationToMs(newValue));
+  await saveEdit('endTime', endTime);
 }
 </script>

@@ -21,6 +21,16 @@
         class="font-medium bg-transparent border-b-2 border-blue-500 outline-none"
         ref="editInput"
       />
+      <input
+        v-if="type === 'duration'"
+        v-model="innerModel"
+        @blur="save"
+        @keydown.enter="save"
+        @keydown.escape="cancel"
+        type="text"
+        class="font-medium bg-transparent border-b-2 border-blue-500 outline-none"
+        ref="editInput"
+      />
       <select
         v-if="type === 'select'"
         v-model="innerModel"
@@ -52,6 +62,7 @@ const props = defineProps<{
   type: 'text' | 'select' | 'duration' | 'time';
   modelValue?: string | Date | number;
   options?: Record<string, string>;
+  isEditing?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -60,7 +71,7 @@ const emit = defineEmits<{
   (e: 'cancel'): void;
 }>();
 
-const isEditing = ref(false);
+const isEditing = ref(props.isEditing);
 const editInput = ref<HTMLElement>();
 
 // For select type, we store the actual value, not the formatted one
@@ -115,9 +126,13 @@ function getEditableValue(value: unknown): string {
 
 function parseValue(value: string): unknown {
   switch (props.type) {
-    case 'duration':
     case 'text':
     case 'select':
+      return value;
+    case 'duration':
+      if (!value.match(/^\d{2}:\d{2}:\d{2}$/)) {
+        throw new Error('Duration must be in HH:MM:SS format');
+      }
       return value;
     case 'time':
       if (!(props.modelValue instanceof Date)) {
@@ -157,6 +172,7 @@ function save() {
     isEditing.value = false;
   } catch (e) {
     console.error('Error saving value:', e);
+    alert(e instanceof Error ? e.message : 'Invalid value');
     // Reset to original value on error
     innerModel.value = getEditableValue(props.modelValue);
   }

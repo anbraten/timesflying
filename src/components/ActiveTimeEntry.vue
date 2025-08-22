@@ -14,8 +14,20 @@
         <span class="text-sm font-medium text-gray-600">{{ getProjectName(activeTimeEntry.project) }}</span>
       </div>
 
+      <div v-if="editingStart" class="flex gap-2 items-center">
+        <span>Start:</span>
+        <InlineEditingField
+          :model-value="activeTimeEntry.startTime"
+          type="time"
+          is-editing
+          @save="updateStart($event as Date)"
+        />
+      </div>
+
       <div
+        v-else
         class="text-xl font-mono font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent"
+        @click="editingStart = true"
       >
         {{ formatDuration(getElapsedTime(activeTimeEntry)) }}
       </div>
@@ -31,18 +43,30 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { useTimer } from '../composables/useTimer';
 import { useTimeTracking } from '../composables/useTimeTracking';
 import { useProjectHelpers } from '../composables/utils';
 import { TimeEntry } from '../types';
 import Button from './ui/Button.vue';
 import Icon from './ui/Icon.vue';
+import InlineEditingField from './ui/InlineEditingField.vue';
 
-defineProps<{
-  activeTimeEntry: TimeEntry | null;
+const props = defineProps<{
+  activeTimeEntry: TimeEntry;
 }>();
 
+const editingStart = ref(false);
+
 const { formatDuration, getElapsedTime } = useTimer();
-const { stopActiveTimeEntry } = useTimeTracking();
+const { stopActiveTimeEntry, updateTimeEntry } = useTimeTracking();
 const { getProjectName, getProjectColor } = useProjectHelpers();
+
+async function updateStart(value: Date) {
+  await updateTimeEntry(props.activeTimeEntry.id, {
+    startTime: value,
+  });
+
+  editingStart.value = false;
+}
 </script>

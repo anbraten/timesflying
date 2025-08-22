@@ -10,5 +10,7 @@ is a super basic time tracking app. It allows you to track your time spent on di
 - [x] Data is stored locally in your browser for privacy
 - [x] Simple and intuitive interface
 - [x] Tasks are grouped by day
+- [x] Update start time of a running task
+- [x] Update end time by editing duration
 - [ ] Import / export your tracking to JSON
 - [ ] Managing projects
