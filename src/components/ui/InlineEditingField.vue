@@ -18,7 +18,18 @@
         @keydown.enter="save"
         @keydown.escape="cancel"
         type="text"
+        placeholder="HH:MM"
         class="font-medium bg-transparent border-b-2 border-blue-500 outline-none"
+        ref="editInput"
+      />
+      <input
+        v-if="type === 'datetime'"
+        v-model="innerModel"
+        @blur="save"
+        @keydown.enter="save"
+        @keydown.escape="cancel"
+        type="datetime-local"
+        class="font-medium bg-transparent border-b-2 border-blue-500 outline-none text-sm"
         ref="editInput"
       />
       <input
@@ -58,8 +69,18 @@
 import { ref, watch, computed, nextTick } from 'vue';
 import { formatTime } from '../../composables/utils';
 
+// Helper function to format datetime for input (ISO format)
+function formatDateTimeForInput(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 const props = defineProps<{
-  type: 'text' | 'select' | 'duration' | 'time';
+  type: 'text' | 'select' | 'duration' | 'time' | 'datetime';
   modelValue?: string | Date | number;
   options?: Record<string, string>;
   isEditing?: boolean;
@@ -90,6 +111,9 @@ const displayValue = computed(() => {
       return props.modelValue;
     case 'time':
       return formatTime(props.modelValue as Date);
+    case 'datetime':
+      // For datetime in display mode, show only the time (HH:mm)
+      return formatTime(props.modelValue as Date);
     case 'select':
       return props.options?.[props.modelValue as string];
     default:
@@ -116,6 +140,8 @@ function getEditableValue(value: unknown): string {
       return String(value);
     case 'time':
       return formatTime(value as Date);
+    case 'datetime':
+      return formatDateTimeForInput(value as Date);
     case 'select':
       // For select, we store the actual value, not the formatted one
       return String(value);
@@ -147,6 +173,16 @@ function parseValue(value: string): unknown {
       const [hours, minutes] = value.split(':').map(Number);
       newDate.setHours(hours, minutes);
       return newDate;
+    case 'datetime':
+      if (!value) {
+        throw new Error('Datetime cannot be empty');
+      }
+
+      const parsedDate = new Date(value);
+      if (isNaN(parsedDate.getTime())) {
+        throw new Error('Invalid datetime format');
+      }
+      return parsedDate;
     default:
       return value;
   }

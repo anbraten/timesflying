@@ -38,11 +38,21 @@
 
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4 text-sm text-gray-500">
-            <!-- Editable start time -->
-            <InlineEditingField v-model="entry.startTime" type="time" @save="saveEdit('startTime', $event as Date)" />
+            <!-- Editable start datetime -->
+            <InlineEditingField
+              v-model="entry.startTime"
+              type="datetime"
+              @save="saveEdit('startTime', $event as Date)"
+            />
 
-            <!-- Editable end time -->
-            <InlineEditingField v-model="entry.endTime" type="time" @save="saveEdit('endTime', $event as Date)" />
+            <!-- Editable end datetime -->
+            <InlineEditingField
+              v-if="entry.endTime"
+              v-model="entry.endTime"
+              type="datetime"
+              @save="saveEdit('endTime', $event as Date)"
+            />
+            <span v-else class="text-gray-400 italic">Running...</span>
           </div>
         </div>
       </div>
@@ -97,13 +107,24 @@ const projectName = computed(() => getProjectName(props.entry.project));
 const projectColor = computed(() => getProjectColor(props.entry.project));
 
 function checkIsValid(entry: TimeEntry): boolean {
-  if (!entry.endTime || entry.startTime >= entry.endTime) {
+  if (entry.endTime && entry.startTime >= entry.endTime) {
     alert('Start time must be before end time');
     return false;
   }
 
   if (entry.description.trim() === '') {
     alert('Description cannot be empty');
+    return false;
+  }
+
+  // Check if dates are valid
+  if (isNaN(entry.startTime.getTime())) {
+    alert('Start time is not a valid date');
+    return false;
+  }
+
+  if (entry.endTime && isNaN(entry.endTime.getTime())) {
+    alert('End time is not a valid date');
     return false;
   }
 
