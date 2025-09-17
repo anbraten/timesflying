@@ -170,6 +170,27 @@ class Database extends Dexie {
   deleteProject(id: number) {
     return this.projects.delete(id);
   }
+
+  async getTimeEntriesInRange(startDate: Date, endDate: Date): Promise<TimeEntry[]> {
+    return this.timeEntries.where('startTime').between(startDate, endDate, true, true).toArray();
+  }
+
+  async exportTimeEntriesAsJson(startDate: Date, endDate: Date): Promise<string> {
+    const timeEntries = await this.getTimeEntriesInRange(startDate, endDate);
+    const projects = await this.projects.toArray();
+
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      dateRange: {
+        start: startDate.toISOString(),
+        end: endDate.toISOString(),
+      },
+      timeEntries,
+      projects: projects,
+    };
+
+    return JSON.stringify(exportData, null, 2);
+  }
 }
 
 let db: Database;

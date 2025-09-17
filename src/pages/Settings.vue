@@ -1,7 +1,10 @@
 <template>
   <div class="flex justify-center">
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md space-y-6">
       <h2 class="text-2xl font-bold mb-4">Settings</h2>
+
+      <!-- Export Data Section -->
+      <ExportData />
 
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-xl font-semibold mb-4">Projects</h3>
@@ -112,6 +115,7 @@ import type { Project } from '../types';
 import IconButton from '../components/ui/IconButton.vue';
 import Button from '../components/ui/Button.vue';
 import Icon from '../components/ui/Icon.vue';
+import ExportData from '../components/ExportData.vue';
 
 const db = useDb();
 
