@@ -57,6 +57,22 @@ export function useTimeTracking() {
     await db.timeEntries.update(entryId, updates);
   }
 
+  async function duplicateTimeEntry(entryId: number) {
+    const entry = await db.timeEntries.get(entryId);
+    if (!entry) return;
+
+    const duplicatedEntry: TimeEntry = {
+      id: Date.now(),
+      startTime: entry.startTime,
+      endTime: entry.endTime,
+      description: entry.description,
+      project: entry.project,
+      isPinned: entry.isPinned,
+    };
+
+    await db.timeEntries.add(duplicatedEntry);
+  }
+
   return {
     activeEntry,
     startNewTimeEntry,
@@ -65,5 +81,6 @@ export function useTimeTracking() {
     togglePinTimeEntry,
     deleteTimeEntry,
     updateTimeEntry,
+    duplicateTimeEntry,
   };
 }

@@ -81,11 +81,32 @@
       d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
       clip-rule="evenodd"
     />
+
+    <!-- Copy Icon -->
+    <template v-if="name === 'copy'">
+      <!-- Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE -->
+      <path
+        fill="currentColor"
+        d="M7.5 15q-.688 0-1.178-.49T5.833 13.333V3.333q0-.687.489-1.178T7.5 1.667h7.5q.688 0 1.178.488t.489 1.178v10q0 .688-.49 1.178T15 15.833zm-3.333 3.333q-.688 0-1.178-.49T2.5 16.667V5h1.667v11.667h9.166v1.666z"
+      />
+    </template>
   </svg>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  name: 'list' | 'stop' | 'clock' | 'play' | 'bookmark' | 'trash' | 'settings' | 'plus' | 'edit' | 'download' | 'eye';
+  name:
+    | 'list'
+    | 'stop'
+    | 'clock'
+    | 'play'
+    | 'bookmark'
+    | 'trash'
+    | 'settings'
+    | 'plus'
+    | 'edit'
+    | 'download'
+    | 'eye'
+    | 'copy';
 }>();
 </script>

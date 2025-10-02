@@ -70,6 +70,8 @@
       <div class="flex items-center gap-1 ml-6">
         <IconButton variant="primary" name="play" @click="continueTimeEntry(entry.id)" title="Continue this task" />
 
+        <IconButton variant="ghost" name="copy" @click="duplicateTimeEntry(entry.id)" title="Duplicate entry" />
+
         <IconButton
           :variant="entry.isPinned ? 'warning' : 'ghost'"
           @click="togglePinTimeEntry(entry.id)"
@@ -98,7 +100,7 @@ const props = defineProps<{
 }>();
 
 const db = useDb();
-const { continueTimeEntry, togglePinTimeEntry, deleteTimeEntry, updateTimeEntry } = useTimeTracking();
+const { continueTimeEntry, togglePinTimeEntry, deleteTimeEntry, updateTimeEntry, duplicateTimeEntry } = useTimeTracking();
 const { getProjectName, getProjectColor } = useProjectHelpers();
 const { formatDuration, getElapsedTime } = useTimer();
 const { data: projects } = db.getProjects();
