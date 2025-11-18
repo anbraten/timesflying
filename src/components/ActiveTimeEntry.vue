@@ -5,13 +5,32 @@
   >
     <div class="flex items-center gap-4">
       <div class="flex flex-1 min-w-0 items-center">
-        <p class="font-semibold text-gray-900 truncate">{{ activeTimeEntry.description }}</p>
+        <!-- Inline editable title/description -->
+        <InlineEditingField
+          type="text"
+          :model-value="activeTimeEntry.description"
+          @save="updateDescription($event as string)"
+        />
 
-        <div
-          class="w-2.5 h-2.5 rounded-full flex-shrink-0 ml-3 mr-1"
-          :style="{ backgroundColor: getProjectColor(activeTimeEntry.project) }"
-        ></div>
-        <span class="text-sm font-medium text-gray-600">{{ getProjectName(activeTimeEntry.project) }}</span>
+        <!-- Project display / inline edit (show color + name in display slot) -->
+        <div class="ml-3 flex items-center gap-2">
+          <InlineEditingField
+            type="select"
+            :model-value="String(activeTimeEntry.project)"
+            :options="projectOptions"
+            @save="updateProject($event as string)"
+          >
+            <template #default>
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  :style="{ backgroundColor: getProjectColor(activeTimeEntry.project) }"
+                ></div>
+                <span class="text-sm font-medium text-gray-600">{{ getProjectName(activeTimeEntry.project) }}</span>
+              </div>
+            </template>
+          </InlineEditingField>
+        </div>
       </div>
 
       <div v-if="editingStart" class="flex gap-2 items-center">
@@ -43,7 +62,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useTimer } from '../composables/useTimer';
 import { useTimeTracking } from '../composables/useTimeTracking';
 import { useProjectHelpers } from '../composables/utils';
@@ -51,6 +70,7 @@ import { TimeEntry } from '../types';
 import Button from './ui/Button.vue';
 import Icon from './ui/Icon.vue';
 import InlineEditingField from './ui/InlineEditingField.vue';
+import { useDb } from '../composables/useDb';
 
 const props = defineProps<{
   activeTimeEntry: TimeEntry;
@@ -61,6 +81,15 @@ const editingStart = ref(false);
 const { formatDuration, getElapsedTime } = useTimer();
 const { stopActiveTimeEntry, updateTimeEntry } = useTimeTracking();
 const { getProjectName, getProjectColor } = useProjectHelpers();
+const { data: projects } = useDb().getProjects();
+
+const projectOptions = computed(() => {
+  const opts: Record<string, string> = {};
+  (projects.value ?? []).forEach((p) => {
+    opts[String(p.id)] = p.name;
+  });
+  return opts;
+});
 
 async function updateStart(value: Date) {
   await updateTimeEntry(props.activeTimeEntry.id, {
@@ -68,5 +97,20 @@ async function updateStart(value: Date) {
   });
 
   editingStart.value = false;
+}
+
+async function updateDescription(value: string) {
+  await updateTimeEntry(props.activeTimeEntry.id, {
+    description: value,
+  });
+}
+
+async function updateProject(value: string) {
+  const projectId = Number(value);
+  if (Number.isNaN(projectId)) return;
+
+  await updateTimeEntry(props.activeTimeEntry.id, {
+    project: projectId,
+  });
 }
 </script>
