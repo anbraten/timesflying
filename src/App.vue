@@ -20,8 +20,11 @@
             </h1>
           </a>
 
-          <IconButton v-if="page === 'home'" name="settings" class="ml-auto" @click="page = 'settings'" />
-          <IconButton v-if="page === 'settings'" name="clock" class="ml-auto" @click="page = 'home'" />
+          <div class="ml-auto flex gap-2">
+            <IconButton v-if="page !== 'reports'" name="chart" @click="page = 'reports'" />
+            <IconButton v-if="page !== 'settings'" name="settings" @click="page = 'settings'" />
+            <IconButton v-if="page !== 'home'" name="clock" @click="page = 'home'" />
+          </div>
         </div>
       </header>
 
@@ -29,6 +32,7 @@
         <div>
           <Home v-if="page === 'home'" />
           <Settings v-if="page === 'settings'" />
+          <Reports v-if="page === 'reports'" />
         </div>
       </Suspense>
     </div>
@@ -40,7 +44,8 @@ import { ref } from 'vue';
 import IconButton from './components/ui/IconButton.vue';
 import Home from './pages/Home.vue';
 import Settings from './pages/Settings.vue';
+import Reports from './pages/Reports.vue';
 
 // TODO: use proper router
-const page = ref<'home' | 'settings'>('home');
+const page = ref<'home' | 'settings' | 'reports'>('home');
 </script>
