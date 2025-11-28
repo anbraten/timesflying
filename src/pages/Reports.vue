@@ -81,7 +81,7 @@
         <div
           v-for="day in dailyData"
           :key="day.date.toISOString()"
-          class="flex-1 flex flex-col items-end gap-1 group h-full"
+          class="flex-1 flex flex-col items-center gap-1 group h-full"
         >
           <div class="relative w-full flex items-end" style="height: 120px">
             <div
