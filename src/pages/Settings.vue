@@ -1,29 +1,31 @@
 <template>
   <div class="flex justify-center">
-    <div class="w-full max-w-md space-y-6">
-      <h2 class="text-2xl font-bold mb-4">Settings</h2>
+    <div class="w-full max-w-lg space-y-5">
 
-      <!-- Export Data Section -->
       <ExportData />
 
-      <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-4">Projects</h3>
+      <!-- Projects Card -->
+      <div class="bg-white shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h3 class="font-semibold text-gray-900">Projects</h3>
+          <Button variant="primary" size="sm" @click="openCreateForm">
+            <Icon name="plus" class="w-3.5 h-3.5 mr-1" />
+            New
+          </Button>
+        </div>
 
         <!-- Projects List -->
-        <ul class="space-y-3" v-if="projects && projects.length > 0">
+        <ul v-if="projects && projects.length > 0" class="divide-y divide-gray-50">
           <li
             v-for="project in projects"
             :key="project.id"
-            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            class="flex items-center justify-between px-6 py-3 hover:bg-gray-50 transition-colors group"
           >
             <div class="flex items-center gap-3">
-              <div
-                class="w-4 h-4 rounded-full border border-gray-300"
-                :style="{ backgroundColor: project.color }"
-              ></div>
-              <span class="text-gray-800 font-medium">{{ project.name }}</span>
+              <div class="w-2.5 h-2.5 rounded-full flex-shrink-0" :style="{ backgroundColor: project.color }" />
+              <span class="text-sm font-medium text-gray-800">{{ project.name }}</span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <IconButton variant="ghost" name="edit" @click="editProject(project)" title="Edit project" />
               <IconButton variant="error" name="trash" @click="deleteProject(project.id)" title="Delete project" />
             </div>
@@ -31,79 +33,63 @@
         </ul>
 
         <!-- Empty State -->
-        <div v-else class="text-center py-8">
-          <p class="text-gray-500 mb-4">No projects yet</p>
-        </div>
-
-        <!-- Add Project Button -->
-        <div class="mt-4">
-          <Button variant="primary" @click="openCreateForm" class="w-full">
-            <Icon name="plus" class="w-4 h-4 mr-2" />
-            Add Project
-          </Button>
+        <div v-else class="py-12 text-center">
+          <p class="text-sm text-gray-400 mb-2">No projects yet</p>
+          <button class="text-sm text-blue-600 hover:text-blue-700" @click="openCreateForm">Create one</button>
         </div>
       </div>
 
       <!-- Project Form Modal -->
       <div
         v-if="showForm"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
         @click="closeForm"
       >
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-4" @click.stop>
-          <h3 class="text-lg font-semibold mb-4">
-            {{ editingProject ? 'Edit Project' : 'Create Project' }}
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6" @click.stop>
+          <h3 class="text-base font-semibold text-gray-900 mb-5">
+            {{ editingProject ? 'Edit Project' : 'New Project' }}
           </h3>
 
-          <form @submit.prevent="saveProject" class="space-y-4">
-            <!-- Project Name -->
+          <form @submit.prevent="saveProject" class="space-y-5">
             <div>
-              <label for="projectName" class="block text-sm font-medium text-gray-700 mb-1"> Project Name </label>
+              <label for="projectName" class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Name</label>
               <input
                 id="projectName"
                 v-model="formData.name"
                 type="text"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter project name"
+                autofocus
+                class="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Project name"
               />
             </div>
 
-            <!-- Project Color -->
             <div>
-              <label for="projectColor" class="block text-sm font-medium text-gray-700 mb-1"> Project Color </label>
-              <select
-                id="projectColor"
-                v-model="formData.color"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select a color</option>
-                <option v-for="color in availableColors" :key="color.value" :value="color.value">
-                  {{ color.name }}
-                </option>
-              </select>
-
-              <!-- Color Preview -->
-              <div v-if="formData.color" class="mt-2 flex items-center gap-2">
-                <div
-                  class="w-6 h-6 rounded-full border border-gray-300"
-                  :style="{ backgroundColor: formData.color }"
-                ></div>
-                <span class="text-sm text-gray-600">Preview</span>
+              <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Color</label>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="color in availableColors"
+                  :key="color.value"
+                  type="button"
+                  :title="color.name"
+                  @click="formData.color = color.value"
+                  class="w-7 h-7 rounded-full transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  :class="formData.color === color.value ? 'ring-2 ring-offset-2 ring-gray-400 scale-110' : 'hover:scale-110'"
+                  :style="{ backgroundColor: color.value }"
+                />
               </div>
             </div>
 
-            <!-- Form Buttons -->
-            <div class="flex gap-3 pt-4">
-              <Button type="button" variant="ghost" @click="closeForm" class="flex-1"> Cancel </Button>
+            <div class="flex gap-2 pt-1">
+              <Button type="button" variant="ghost" @click="closeForm" class="flex-1">Cancel</Button>
               <Button type="submit" variant="primary" class="flex-1" :disabled="!formData.name || !formData.color">
-                {{ editingProject ? 'Update' : 'Create' }}
+                {{ editingProject ? 'Save' : 'Create' }}
               </Button>
             </div>
           </form>
         </div>
       </div>
+
     </div>
   </div>
 </template>

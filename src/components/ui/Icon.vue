@@ -98,6 +98,22 @@
       d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
       clip-rule="evenodd"
     />
+
+    <!-- Upload Icon -->
+    <path
+      v-if="name === 'upload'"
+      fill-rule="evenodd"
+      d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+      clip-rule="evenodd"
+    />
+
+    <!-- Chevron Right Icon -->
+    <path
+      v-if="name === 'chevron-right'"
+      fill-rule="evenodd"
+      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+      clip-rule="evenodd"
+    />
   </svg>
 </template>
 
@@ -114,8 +130,10 @@ defineProps<{
     | 'plus'
     | 'edit'
     | 'download'
+    | 'upload'
     | 'eye'
     | 'copy'
-    | 'chart';
+    | 'chart'
+    | 'chevron-right';
 }>();
 </script>

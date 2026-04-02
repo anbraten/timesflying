@@ -175,6 +175,41 @@ class Database extends Dexie {
     return this.timeEntries.where('startTime').between(startDate, endDate, true, true).toArray();
   }
 
+  async importFromJson(json: string): Promise<{ timeEntries: number; projects: number }> {
+    const data = JSON.parse(json);
+
+    if (!data.timeEntries || !Array.isArray(data.timeEntries)) {
+      throw new Error('Invalid export file: missing timeEntries');
+    }
+    if (!data.projects || !Array.isArray(data.projects)) {
+      throw new Error('Invalid export file: missing projects');
+    }
+
+    const timeEntries: TimeEntry[] = data.timeEntries.map((e: TimeEntry & { startTime: string; endTime?: string }) => ({
+      ...e,
+      startTime: new Date(e.startTime),
+      endTime: e.endTime ? new Date(e.endTime) : undefined,
+    }));
+
+    await this.projects.bulkPut(data.projects);
+    await this.timeEntries.bulkPut(timeEntries);
+
+    return { timeEntries: timeEntries.length, projects: data.projects.length };
+  }
+
+  async exportAllAsJson(): Promise<string> {
+    const timeEntries = await this.timeEntries.orderBy('startTime').toArray();
+    const projects = await this.projects.toArray();
+
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      timeEntries,
+      projects,
+    };
+
+    return JSON.stringify(exportData, null, 2);
+  }
+
   async exportTimeEntriesAsJson(startDate: Date, endDate: Date): Promise<string> {
     const timeEntries = await this.getTimeEntriesInRange(startDate, endDate);
     const projects = await this.projects.toArray();
