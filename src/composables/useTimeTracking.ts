@@ -1,8 +1,11 @@
-import type { TimeEntry } from '../types';
-import { useDb } from './useDb';
+import type { TimeEntry } from "../types";
+import { useDb } from "./useDb";
+import { useFaviconBadge } from "./useFaviconBadge";
 
 export function useTimeTracking() {
   const db = useDb();
+
+  const { showBadge, hideBadge } = useFaviconBadge();
 
   const { data: activeEntry } = db.getActiveTimeEntry();
 
@@ -20,11 +23,17 @@ export function useTimeTracking() {
       isPinned: false,
     };
 
+    document.title = `TF: ${description}`;
+    showBadge();
+
     await db.timeEntries.add(newEntry);
   }
 
   async function stopActiveTimeEntry() {
     if (!activeEntry.value) return;
+
+    document.title = defaultTitle;
+    hideBadge();
 
     await db.timeEntries.update(activeEntry.value.id, {
       endTime: new Date(),
@@ -84,3 +93,5 @@ export function useTimeTracking() {
     duplicateTimeEntry,
   };
 }
+
+const defaultTitle = "Time's flying";
