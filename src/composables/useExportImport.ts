@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { useDb } from './useDb';
+import { subBusinessDays } from 'date-fns'
 
 function downloadJson(json: string, filename: string) {
   const blob = new Blob([json], { type: 'application/json' });
@@ -24,13 +25,18 @@ export function useExportImport() {
   const startDate = ref(new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]);
   const endDate = ref(new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]);
 
-  function setDateRange(range: 'today' | 'thisWeek' | 'thisMonth' | 'lastMonth' | 'thisYear') {
+  function setDateRange(range: 'previous workday' | 'today' | 'thisWeek' | 'thisMonth' | 'lastMonth' | 'thisYear') {
     const today = new Date();
 
     switch (range) {
       case 'today':
         startDate.value = today.toISOString().split('T')[0];
         endDate.value = today.toISOString().split('T')[0];
+        break;
+      case 'previous workday':
+        const previousWorkday = subBusinessDays (today, 1)
+        startDate.value = previousWorkday.toISOString().split('T')[0];
+        endDate.value = previousWorkday.toISOString().split('T')[0];
         break;
       case 'thisWeek': {
         const start = new Date(today);
