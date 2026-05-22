@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'grow-1': shouldGrow && isEditing }">
     <template v-if="isEditing">
       <input
         v-if="type === 'text'"
@@ -8,7 +8,7 @@
         @keydown.enter="save"
         @keydown.escape="cancel"
         type="text"
-        class="font-medium bg-transparent border-b-2 border-blue-500 outline-none"
+        class="font-medium bg-transparent border-b-2 border-blue-500 outline-none w-full"
         ref="editInput"
       />
       <input
@@ -84,6 +84,7 @@ const props = defineProps<{
   modelValue?: string | Date | number;
   options?: Record<string, string>;
   isEditing?: boolean;
+  shouldGrow?: boolean;
 }>();
 
 const emit = defineEmits<{
