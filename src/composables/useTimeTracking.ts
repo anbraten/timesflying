@@ -23,7 +23,7 @@ export function useTimeTracking() {
       isPinned: false,
     };
 
-    document.title = `TF: ${description}`;
+    document.title = `${description} - Time's flying`;
     showBadge();
 
     await db.timeEntries.add(newEntry);
