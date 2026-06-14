@@ -10,6 +10,7 @@
           type="text"
           :model-value="activeTimeEntry.description"
           @save="updateDescription($event as string)"
+          shouldGrow
         />
 
         <!-- Project display / inline edit (show color + name in display slot) -->
