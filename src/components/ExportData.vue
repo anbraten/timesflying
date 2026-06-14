@@ -122,6 +122,7 @@ const fileInputRef = useTemplateRef<HTMLInputElement>('fileInputRef');
 
 const dateRanges = [
   { key: 'today', label: 'Today' },
+  { key: 'previous workday', label: 'Previous Workday' },
   { key: 'thisWeek', label: 'This Week' },
   { key: 'thisMonth', label: 'This Month' },
   { key: 'lastMonth', label: 'Last Month' },

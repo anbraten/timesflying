@@ -10,6 +10,7 @@
             v-model="entry.description"
             type="text"
             @save="saveEdit('description', $event as string)"
+            shouldGrow
           />
 
           <InlineEditingField
