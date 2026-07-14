@@ -45,7 +45,10 @@ import IconButton from './components/ui/IconButton.vue';
 import Home from './pages/Home.vue';
 import Settings from './pages/Settings.vue';
 import Reports from './pages/Reports.vue';
+import { useTimerTab } from './composables/useTimerTab';
 
 // TODO: use proper router
 const page = ref<'home' | 'settings' | 'reports'>('home');
+
+useTimerTab();
 </script>
